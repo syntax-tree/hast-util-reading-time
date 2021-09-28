@@ -25,7 +25,7 @@ npm install hast-util-reading-time
 ## Use
 
 Say we have the following HTML from [“Word per minute: Alphanumeric entry” on
-Wikipedia](https://en.wikipedia.org/wiki/Words_per_minute#Alphanumeric_entry) in
+Wikipedia](https://en.wikipedia.org/wiki/Words\_per\_minute#Alphanumeric\_entry) in
 `example.html`:
 
 ```html

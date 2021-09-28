@@ -62,18 +62,24 @@ export function readingTime(tree, options = {}) {
     Math.max(firstGradeAge, Math.round(options.age || 16))
   )
   const text = toText(tree)
-  const scores = readabilityScores(text)
-  /** @type {number} */
-  const readabilityAge =
-    firstGradeAge +
-    median([
+  const scores = readabilityScores(text) || {}
+  const score = median(
+    [
       scores.daleChall,
       scores.ari,
       scores.colemanLiau,
       scores.fleschKincaid,
       scores.smog,
       scores.gunningFog
-    ])
+    ].filter((d) => d !== undefined)
+  )
+
+  if (score === null) {
+    return 0
+  }
+
+  /** @type {number} */
+  const readabilityAge = firstGradeAge + score
 
   // WPM the target audience normally reads.
   const targetWpm = baseWpm + (targetAge - firstGradeAge) * addedWpmPerGrade

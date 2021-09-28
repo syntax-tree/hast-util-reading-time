@@ -42,6 +42,12 @@ test('hastUtilReadingTime', (t) => {
   )
 
   t.deepEqual(
+    readingTime({type: 'root', children: []}),
+    0,
+    'should estimate (empty)'
+  )
+
+  t.deepEqual(
     readingTime(tree, {age: 12}),
     2.437_14,
     'should take age into account (1, somewhat complex)'
