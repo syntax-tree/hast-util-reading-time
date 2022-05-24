@@ -8,25 +8,80 @@
 [![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-**[hast][]** utility to estimate the reading time, taking readability of the
-document and a target age group into account.
+[hast][] utility to estimate the reading time, taking readability of the
+document into account.
+
+## Contents
+
+*   [What is this?](#what-is-this)
+*   [When should I use this?](#when-should-i-use-this)
+*   [Install](#install)
+*   [Use](#use)
+*   [API](#api)
+    *   [`readingTime(tree, options?)`](#readingtimetree-options)
+*   [Types](#types)
+*   [Compatibility](#compatibility)
+*   [Security](#security)
+*   [Related](#related)
+*   [Contribute](#contribute)
+*   [License](#license)
+
+## What is this?
+
+This package is a utility that takes a [hast][] (HTML) syntax tree and estimates
+the reading time, taking readability of the document and a target age group into
+account.
+
+The algorithm works as follows:
+
+*   estimate the WPM (words per minute) of the audience age based on the facts
+    that English can be read at ±228 WPM (Trauzettel-Klosinski), and that
+    reading rate increases 14 WPM per grade (Carver)
+*   apply the readability algorithms [Dale—Chall][dale-chall],
+    [Automated Readability][automated-readability], [Coleman-Liau][],
+    [Flesch][], [Gunning-Fog][], [SMOG][], and [Spache][]
+*   adjust the WPM of the audience for whether the readability algorithms
+    estimate its above or below their level
+*   `wordCount / adjustedWpm = readingTime`
+
+> ⚠️ **Important**: this algorithm is specific to English.
+
+## When should I use this?
+
+This is a small utility useful when you have an AST, know your audience, and
+want a really smart reading time algorithm.
+
+The rehype plugin
+[`rehype-infer-reading-time-meta`][rehype-infer-reading-time-meta]
+wraps this utility to figure, for use with [`rehype-meta`][rehype-meta].
 
 ## Install
 
-This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c):
-Node 12+ is needed to use it and it must be `import`ed instead of `require`d.
-
-[npm][]:
+This package is [ESM only][esm].
+In Node.js (version 12.20+, 14.14+, or 16.0+), install with [npm][]:
 
 ```sh
 npm install hast-util-reading-time
 ```
 
+In Deno with [`esm.sh`][esmsh]:
+
+```js
+import {readingTime} from "https://esm.sh/hast-util-reading-time@1"
+```
+
+In browsers with [`esm.sh`][esmsh]:
+
+```html
+<script type="module">
+  import {readingTime} from "https://esm.sh/hast-util-reading-time@1?bundle"
+</script>
+```
+
 ## Use
 
-Say we have the following HTML from [“Word per minute: Alphanumeric entry” on
-Wikipedia](https://en.wikipedia.org/wiki/Words_per_minute#Alphanumeric_entry) in
-`example.html`:
+Say our document `example.html` contains (from [“Word per minute: Alphanumeric
+entry” on Wikipedia][wiki]:
 
 ```html
 <p>Since the length or duration of words is clearly variable, for the purpose of measurement of text entry, the definition of each "word" is often standardized to be five characters or keystrokes long in English, including spaces and punctuation. For example, under such a method applied to plain English text the phrase "I run" counts as one word, but "rhinoceros" and "let's talk" would both count as two.</p>
@@ -35,15 +90,15 @@ Wikipedia](https://en.wikipedia.org/wiki/Words_per_minute#Alphanumeric_entry) in
 <p>An average professional typist types usually in speeds of 43 to 80 wpm, while some positions can require 80 to 95 (usually the minimum required for dispatch positions and other time-sensitive typing jobs), and some advanced typists work at speeds above 120 wpm. Two-finger typists, sometimes also referred to as "hunt and peck" typists, commonly reach sustained speeds of about 37 wpm for memorized text and 27 wpm when copying text, but in bursts may be able to reach much higher speeds. From the 1920s through the 1970s, typing speed (along with shorthand speed) was an important secretarial qualification and typing contests were popular and often publicized by typewriter companies as promotional tools.</p>
 ```
 
-And our module, `example.js`:
+…and our module `example.js` looks as follows:
 
 ```js
-import fs from 'node:fs'
+import fs from 'node:fs/promises'
 import {unified} from 'unified'
 import rehypeParse from 'rehype-parse'
 import {readingTime} from 'hast-util-reading-time'
 
-const example = fs.readFileSync('example.html')
+const example = await fs.readFile('example.html')
 const tree = unified().use(rehypeParse, {fragment: true}).parse(example)
 
 console.log(
@@ -51,7 +106,7 @@ console.log(
 )
 ```
 
-Now, running `node example.js` yields:
+…now running `node example.js` yields:
 
 ```txt
 It takes about 2-3m to read
@@ -59,27 +114,16 @@ It takes about 2-3m to read
 
 ## API
 
-This package exports the following identifiers: `readingTime`.
+This package exports the identifier `readingTime`.
 There is no default export.
 
 ### `readingTime(tree, options?)`
 
-Utility to estimate the reading time, taking readability of the document and
-a target age group into account.
+Estimate the reading time.
 
-The algorithm works as follows:
+##### `options`
 
-*   Estimate the WPM of the audience age based on the facts that English can be
-    read at ±228 WPM (Trauzettel-Klosinski), and that reading rate increases 14
-    WPM per grade (Carver)
-*   Apply the readability algorithms [Dale—Chall][dale-chall],
-    [Automated Readability][automated-readability], [Coleman-Liau][],
-    [Flesch][], [Gunning-Fog][], [SMOG][], and [Spache][]
-*   Adjust the WPM of the audience for whether the readability algorithms
-    estimate its above or below their level
-*   `wordCount / adjustedWpm`
-
-Note: this algorithm is specific to English!
+Configuration (optional).
 
 ###### `options.age`
 
@@ -90,8 +134,21 @@ expect your readers to all be college graduates, etc.
 
 ###### Returns
 
-`number` — Reading time in minutes.
-The result’s not rounded so it’s possible to retrieve estimated seconds from it.
+Reading time in minutes (`number`).
+The result is not rounded so it’s possible to retrieve estimated seconds from
+it.
+
+## Types
+
+This package is fully typed with [TypeScript][].
+It exports the additional type `Options`.
+
+## Compatibility
+
+Projects maintained by the unified collective are compatible with all maintained
+versions of Node.js.
+As of now, that is Node.js 12.20+, 14.14+, 16.0+, and 18.0+.
+Our projects sometimes work with older versions, but this is not guaranteed.
 
 ## Security
 
@@ -99,10 +156,15 @@ Use of `hast-util-reading-time` is safe.
 
 ## Related
 
+*   [`rehype-infer-reading-time-meta`][rehype-infer-reading-time-meta]
+    — infer reading time as file metadata from the document
+*   [`rehype-meta`][rehype-meta]
+    — add metadata to the head of a document
+
 ## Contribute
 
-See [`contributing.md` in `syntax-tree/.github`][contributing] for ways to get
-started.
+See [`contributing.md`][contributing] in [`syntax-tree/.github`][health] for
+ways to get started.
 See [`support.md`][support] for ways to get help.
 
 This project has a [code of conduct][coc].
@@ -143,15 +205,23 @@ abide by its terms.
 
 [npm]: https://docs.npmjs.com/cli/install
 
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
+[esmsh]: https://esm.sh
+
+[typescript]: https://www.typescriptlang.org
+
 [license]: license
 
 [author]: https://wooorm.com
 
-[contributing]: https://github.com/syntax-tree/.github/blob/HEAD/contributing.md
+[health]: https://github.com/syntax-tree/.github
 
-[support]: https://github.com/syntax-tree/.github/blob/HEAD/support.md
+[contributing]: https://github.com/syntax-tree/.github/blob/main/contributing.md
 
-[coc]: https://github.com/syntax-tree/.github/blob/HEAD/code-of-conduct.md
+[support]: https://github.com/syntax-tree/.github/blob/main/support.md
+
+[coc]: https://github.com/syntax-tree/.github/blob/main/code-of-conduct.md
 
 [hast]: https://github.com/syntax-tree/hast
 
@@ -168,3 +238,9 @@ abide by its terms.
 [spache]: https://github.com/words/spache-formula
 
 [smog]: https://github.com/words/smog-formula
+
+[rehype-infer-reading-time-meta]: https://github.com/rehypejs/rehype-infer-reading-time-meta
+
+[rehype-meta]: https://github.com/rehypejs/rehype-meta
+
+[wiki]: https://en.wikipedia.org/wiki/Words_per_minute#Alphanumeric_entry
