@@ -52,7 +52,7 @@
     "type-coverage": "^2.0.0",
     "typescript": "^4.0.0",
     "unified": "^10.1.0",
-    "xo": "^0.44.0"
+    "xo": "^0.49.0"
   },
   "scripts": {
     "prepack": "npm run build && npm run format",
