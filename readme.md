@@ -94,12 +94,10 @@ entry” on Wikipedia][wiki]:
 
 ```js
 import fs from 'node:fs/promises'
-import {unified} from 'unified'
-import rehypeParse from 'rehype-parse'
+import {fromHtml} from 'hast-util-from-html'
 import {readingTime} from 'hast-util-reading-time'
 
-const example = await fs.readFile('example.html')
-const tree = unified().use(rehypeParse, {fragment: true}).parse(example)
+const tree = fromHtml(await fs.readFile('example.html'), {fragment: true})
 
 console.log(
   `It takes about ${Math.ceil(readingTime(tree, {age: 18}))}-${Math.ceil(readingTime(tree, {age: 14}))}m to read`
