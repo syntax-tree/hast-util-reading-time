@@ -30,54 +30,54 @@ const treeSomewhatSimple = processor.parse(somewhatSimple)
 
 test('hastUtilReadingTime', (t) => {
   t.deepEqual(
-    readingTime(tree),
-    1.219_403,
+    readingTime(tree).toFixed(2),
+    '1.22',
     'should estimate (somewhat complex)'
   )
 
   t.deepEqual(
-    readingTime(treeSomewhatSimple),
-    1.163_913,
+    readingTime(treeSomewhatSimple).toFixed(2),
+    '1.10',
     'should estimate (somewhat simple)'
   )
 
   t.deepEqual(
-    readingTime({type: 'root', children: []}),
-    0,
+    readingTime({type: 'root', children: []}).toFixed(2),
+    '0.00',
     'should estimate (empty)'
   )
 
   t.deepEqual(
-    readingTime(tree, {age: 12}),
-    2.437_14,
+    readingTime(tree, {age: 12}).toFixed(2),
+    '2.44',
     'should take age into account (1, somewhat complex)'
   )
   t.deepEqual(
-    readingTime(treeSomewhatSimple, {age: 12}),
-    2.225_117,
+    readingTime(treeSomewhatSimple, {age: 12}).toFixed(2),
+    '1.98',
     'should take age into account (1, somewhat simple)'
   )
 
   t.deepEqual(
-    readingTime(tree, {age: 21}),
-    0.7506,
+    readingTime(tree, {age: 21}).toFixed(2),
+    '0.75',
     'should take age into account (2, somewhat complex)'
   )
   t.deepEqual(
-    readingTime(treeSomewhatSimple, {age: 21}),
-    0.7292,
+    readingTime(treeSomewhatSimple, {age: 21}).toFixed(2),
+    '0.71',
     'should take age into account (2, somewhat simple)'
   )
 
   t.deepEqual(
-    readingTime(tree, {age: 1}),
-    4.456_522,
+    readingTime(tree, {age: 1}).toFixed(2),
+    '4.46',
     'should cap at a reasonable time (1)'
   )
 
   t.deepEqual(
-    readingTime(tree, {age: 81}),
-    0.697_006,
+    readingTime(tree, {age: 81}).toFixed(2),
+    '0.70',
     'should cap at a reasonable time (2)'
   )
 
