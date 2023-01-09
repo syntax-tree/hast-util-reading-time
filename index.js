@@ -1,11 +1,16 @@
 /**
  * @typedef {import('hast').Root} Root
  * @typedef {import('hast').Content} Content
- * @typedef {Root|Content} Node
+ */
+
+/**
+ * @typedef {Root | Content} Node
  *
  * @typedef Options
- * @property {number} [age=16]
+ *   Configuration
+ * @property {number | null | undefined} [age=16]
  *   Target age group.
+ *
  *   This is the age your target audience was still in school.
  *   Set it to 18 if you expect all readers to have finished high school,
  *   21 if you expect your readers to all be college graduates, etc.
@@ -35,8 +40,8 @@ const baseWpm =
 const accuracy = 1e6
 
 /**
- * Utility to estimate the reading time, taking readability of the document and
- * a target age group into account.
+ * Estimate the reading time, taking readability of the document and a target
+ * age group into account.
  *
  * *   [1] For more info on US education/grade levels, see:
  *     <https://en.wikipedia.org/wiki/Educational_stage#United_States>.
@@ -49,17 +54,18 @@ const accuracy = 1e6
  * from, see: <https://martech.org/estimated-reading-times-increase-engagement/>.
  *
  * @param {Node} tree
- *   Content to estimate.
- * @param {Options} [options]
+ *   Tree to inspect.
+ * @param {Options | null | undefined} [options]
  *   Configuration.
  * @returns {number}
  *   Estimated reading time in minutes.
  */
-export function readingTime(tree, options = {}) {
+export function readingTime(tree, options) {
+  const settings = options || {}
   // Cap an age to a reasonable and meaningful age in school.
   const targetAge = Math.min(
     graduationAge,
-    Math.max(firstGradeAge, Math.round(options.age || 16))
+    Math.max(firstGradeAge, Math.round(settings.age || 16))
   )
   const text = toText(tree)
   const scores = readabilityScores(text) || {}
