@@ -18,7 +18,8 @@ document into account.
 *   [Install](#install)
 *   [Use](#use)
 *   [API](#api)
-    *   [`readingTime(tree, options?)`](#readingtimetree-options)
+    *   [`readingTime(tree[, options])`](#readingtimetree-options)
+    *   [`Options`](#options)
 *   [Types](#types)
 *   [Compatibility](#compatibility)
 *   [Security](#security)
@@ -32,20 +33,6 @@ This package is a utility that takes a [hast][] (HTML) syntax tree and estimates
 the reading time, taking readability of the document and a target age group into
 account.
 
-The algorithm works as follows:
-
-*   estimate the WPM (words per minute) of the audience age based on the facts
-    that English can be read at ±228 WPM (Trauzettel-Klosinski), and that
-    reading rate increases 14 WPM per grade (Carver)
-*   apply the readability algorithms [Dale—Chall][dale-chall],
-    [Automated Readability][automated-readability], [Coleman-Liau][],
-    [Flesch][], [Gunning-Fog][], [SMOG][], and [Spache][]
-*   adjust the WPM of the audience for whether the readability algorithms
-    estimate its above or below their level
-*   `wordCount / adjustedWpm = readingTime`
-
-> ⚠️ **Important**: this algorithm is specific to English.
-
 ## When should I use this?
 
 This is a small utility useful when you have an AST, know your audience, and
@@ -58,7 +45,7 @@ wraps this utility to figure, for use with [`rehype-meta`][rehype-meta].
 ## Install
 
 This package is [ESM only][esm].
-In Node.js (version 12.20+, 14.14+, or 16.0+), install with [npm][]:
+In Node.js (version 14.14+ and or 16.0+), install with [npm][]:
 
 ```sh
 npm install hast-util-reading-time
@@ -67,7 +54,7 @@ npm install hast-util-reading-time
 In Deno with [`esm.sh`][esmsh]:
 
 ```js
-import {readingTime} from "https://esm.sh/hast-util-reading-time@1"
+import {readingTime} from 'https://esm.sh/hast-util-reading-time@1'
 ```
 
 In browsers with [`esm.sh`][esmsh]:
@@ -112,40 +99,71 @@ It takes about 2-3m to read
 
 ## API
 
-This package exports the identifier `readingTime`.
+This package exports the identifier [`readingTime`][readingtime].
 There is no default export.
 
-### `readingTime(tree, options?)`
+### `readingTime(tree[, options])`
 
-Estimate the reading time.
+Estimate the reading time, taking readability of the document and a target age
+group into account.
 
-##### `options`
+For some more background info/history and a few insight on where this all comes
+from, see [How estimated reading times increase content engagement][martech].
 
-Configuration (optional).
+###### Algorithm
 
-###### `options.age`
+The algorithm works as follows:
+
+*   estimate the WPM (words per minute) of the audience age based on the facts
+    that English can be read at ±228 WPM (Trauzettel-Klosinski), and that
+    reading rate increases 14 WPM per grade (Carver)
+*   apply the readability algorithms [Dale—Chall][dale-chall],
+    [Automated Readability][automated-readability], [Coleman-Liau][],
+    [Flesch][], [Gunning-Fog][], [SMOG][], and [Spache][]
+*   adjust the WPM of the audience for whether the readability algorithms
+    estimate its above or below their level
+*   `wordCount / adjustedWpm = readingTime`
+
+> ⚠️ **Important**: this algorithm is specific to English.
+
+###### Parameters
+
+*   `tree` ([`Node`][node])
+    — tree to inspect
+*   `options` ([`Options`][options])
+    — configuration
+
+###### Returns
+
+Estimated reading time in minutes (`number`).
+
+The result is not rounded so it’s possible to retrieve estimated seconds from
+it.
+
+### `Options`
+
+Configuration (TypeScript type).
+
+##### Fields
+
+###### `age`
 
 Target age group (`number`, default: `16`).
+
 This is the age your target audience was still in school.
 Set it to 18 if you expect all readers to have finished high school, 21 if you
 expect your readers to all be college graduates, etc.
 
-###### Returns
-
-Reading time in minutes (`number`).
-The result is not rounded so it’s possible to retrieve estimated seconds from
-it.
-
 ## Types
 
 This package is fully typed with [TypeScript][].
-It exports the additional type `Options`.
+It exports the additional type [`Options`][options].
 
 ## Compatibility
 
 Projects maintained by the unified collective are compatible with all maintained
 versions of Node.js.
-As of now, that is Node.js 12.20+, 14.14+, 16.0+, and 18.0+.
+As of now, that is Node.js 14.14+ and 16.0+.
 Our projects sometimes work with older versions, but this is not guaranteed.
 
 ## Security
@@ -223,6 +241,8 @@ abide by its terms.
 
 [hast]: https://github.com/syntax-tree/hast
 
+[node]: https://github.com/syntax-tree/hast#nodes
+
 [dale-chall]: https://github.com/words/dale-chall-formula
 
 [automated-readability]: https://github.com/words/automated-readability
@@ -242,3 +262,9 @@ abide by its terms.
 [rehype-meta]: https://github.com/rehypejs/rehype-meta
 
 [wiki]: https://en.wikipedia.org/wiki/Words_per_minute#Alphanumeric_entry
+
+[martech]: https://martech.org/estimated-reading-times-increase-engagement/
+
+[readingtime]: #readingtimetree-options
+
+[options]: #options
