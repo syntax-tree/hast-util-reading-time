@@ -1,6 +1,6 @@
 {
   "name": "hast-util-reading-time",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "hast utility to estimate the reading time",
   "license": "MIT",
   "keywords": [
