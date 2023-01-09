@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {fromHtml} from 'hast-util-from-html'
 import {readingTime} from './index.js'
+import * as mod from './index.js'
 
 // https://simple.wikipedia.org/wiki/Reading
 const somewhatSimple = `<p>Reading is what we do when we understand writing.</p>
@@ -27,7 +28,13 @@ const somewhatComplex = `<p>Since the length or duration of words is clearly var
 const tree = fromHtml(somewhatComplex, {fragment: true})
 const treeSomewhatSimple = fromHtml(somewhatSimple, {fragment: true})
 
-test('hastUtilReadingTime', () => {
+test('readingTime', () => {
+  assert.deepEqual(
+    Object.keys(mod).sort(),
+    ['readingTime'],
+    'should expose the public api'
+  )
+
   assert.deepEqual(
     readingTime(tree).toFixed(2),
     '1.22',
