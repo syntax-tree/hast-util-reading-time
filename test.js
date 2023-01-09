@@ -1,6 +1,5 @@
 import test from 'tape'
-import {unified} from 'unified'
-import rehypeParse from 'rehype-parse'
+import {fromHtml} from 'hast-util-from-html'
 import {readingTime} from './index.js'
 
 // https://simple.wikipedia.org/wiki/Reading
@@ -24,9 +23,8 @@ const somewhatComplex = `<p>Since the length or duration of words is clearly var
 <p>An average professional typist types usually in speeds of 43 to 80 wpm, while some positions can require 80 to 95 (usually the minimum required for dispatch positions and other time-sensitive typing jobs), and some advanced typists work at speeds above 120 wpm. Two-finger typists, sometimes also referred to as "hunt and peck" typists, commonly reach sustained speeds of about 37 wpm for memorized</p>
 `
 
-const processor = unified().use(rehypeParse, {fragment: true})
-const tree = processor.parse(somewhatComplex)
-const treeSomewhatSimple = processor.parse(somewhatSimple)
+const tree = fromHtml(somewhatComplex, {fragment: true})
+const treeSomewhatSimple = fromHtml(somewhatSimple, {fragment: true})
 
 test('hastUtilReadingTime', (t) => {
   t.deepEqual(
