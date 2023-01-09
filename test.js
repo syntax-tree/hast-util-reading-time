@@ -1,4 +1,5 @@
-import test from 'tape'
+import assert from 'node:assert/strict'
+import test from 'node:test'
 import {fromHtml} from 'hast-util-from-html'
 import {readingTime} from './index.js'
 
@@ -26,58 +27,56 @@ const somewhatComplex = `<p>Since the length or duration of words is clearly var
 const tree = fromHtml(somewhatComplex, {fragment: true})
 const treeSomewhatSimple = fromHtml(somewhatSimple, {fragment: true})
 
-test('hastUtilReadingTime', (t) => {
-  t.deepEqual(
+test('hastUtilReadingTime', () => {
+  assert.deepEqual(
     readingTime(tree).toFixed(2),
     '1.22',
     'should estimate (somewhat complex)'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     readingTime(treeSomewhatSimple).toFixed(2),
     '1.10',
     'should estimate (somewhat simple)'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     readingTime({type: 'root', children: []}).toFixed(2),
     '0.00',
     'should estimate (empty)'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     readingTime(tree, {age: 12}).toFixed(2),
     '2.44',
     'should take age into account (1, somewhat complex)'
   )
-  t.deepEqual(
+  assert.deepEqual(
     readingTime(treeSomewhatSimple, {age: 12}).toFixed(2),
     '1.98',
     'should take age into account (1, somewhat simple)'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     readingTime(tree, {age: 21}).toFixed(2),
     '0.75',
     'should take age into account (2, somewhat complex)'
   )
-  t.deepEqual(
+  assert.deepEqual(
     readingTime(treeSomewhatSimple, {age: 21}).toFixed(2),
     '0.71',
     'should take age into account (2, somewhat simple)'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     readingTime(tree, {age: 1}).toFixed(2),
     '4.46',
     'should cap at a reasonable time (1)'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     readingTime(tree, {age: 81}).toFixed(2),
     '0.70',
     'should cap at a reasonable time (2)'
   )
-
-  t.end()
 })
