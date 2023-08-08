@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {fromHtml} from 'hast-util-from-html'
-import {readingTime} from './index.js'
+import {readingTime} from 'hast-util-reading-time'
 
 // https://simple.wikipedia.org/wiki/Reading
 const somewhatSimple = `<p>Reading is what we do when we understand writing.</p>
@@ -29,9 +29,10 @@ const treeSomewhatSimple = fromHtml(somewhatSimple, {fragment: true})
 
 test('readingTime', async function (t) {
   await t.test('should expose the public api', async function () {
-    assert.deepEqual(Object.keys(await import('./index.js')).sort(), [
-      'readingTime'
-    ])
+    assert.deepEqual(
+      Object.keys(await import('hast-util-reading-time')).sort(),
+      ['readingTime']
+    )
   })
 
   await t.test('should estimate (somewhat complex)', async function () {
