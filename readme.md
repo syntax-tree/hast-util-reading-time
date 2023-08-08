@@ -54,14 +54,14 @@ npm install hast-util-reading-time
 In Deno with [`esm.sh`][esmsh]:
 
 ```js
-import {readingTime} from 'https://esm.sh/hast-util-reading-time@1'
+import {readingTime} from 'https://esm.sh/hast-util-reading-time@2'
 ```
 
 In browsers with [`esm.sh`][esmsh]:
 
 ```html
 <script type="module">
-  import {readingTime} from 'https://esm.sh/hast-util-reading-time@1?bundle'
+  import {readingTime} from 'https://esm.sh/hast-util-reading-time@2?bundle'
 </script>
 ```
 
