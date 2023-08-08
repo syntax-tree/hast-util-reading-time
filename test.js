@@ -2,7 +2,6 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {fromHtml} from 'hast-util-from-html'
 import {readingTime} from './index.js'
-import * as mod from './index.js'
 
 // https://simple.wikipedia.org/wiki/Reading
 const somewhatSimple = `<p>Reading is what we do when we understand writing.</p>
@@ -28,62 +27,67 @@ const somewhatComplex = `<p>Since the length or duration of words is clearly var
 const tree = fromHtml(somewhatComplex, {fragment: true})
 const treeSomewhatSimple = fromHtml(somewhatSimple, {fragment: true})
 
-test('readingTime', () => {
-  assert.deepEqual(
-    Object.keys(mod).sort(),
-    ['readingTime'],
-    'should expose the public api'
+test('readingTime', async function (t) {
+  await t.test('should expose the public api', async function () {
+    assert.deepEqual(Object.keys(await import('./index.js')).sort(), [
+      'readingTime'
+    ])
+  })
+
+  await t.test('should estimate (somewhat complex)', async function () {
+    assert.deepEqual(readingTime(tree).toFixed(2), '1.22')
+  })
+
+  await t.test('should estimate (somewhat simple)', async function () {
+    assert.deepEqual(readingTime(treeSomewhatSimple).toFixed(2), '1.10')
+  })
+
+  await t.test('should estimate (empty)', async function () {
+    assert.deepEqual(
+      readingTime({type: 'root', children: []}).toFixed(2),
+      '0.00'
+    )
+  })
+
+  await t.test(
+    'should take age into account (1, somewhat complex)',
+    async function () {
+      assert.deepEqual(readingTime(tree, {age: 12}).toFixed(2), '2.44')
+    }
   )
 
-  assert.deepEqual(
-    readingTime(tree).toFixed(2),
-    '1.22',
-    'should estimate (somewhat complex)'
+  await t.test(
+    'should take age into account (1, somewhat simple)',
+    async function () {
+      assert.deepEqual(
+        readingTime(treeSomewhatSimple, {age: 12}).toFixed(2),
+        '1.98'
+      )
+    }
   )
 
-  assert.deepEqual(
-    readingTime(treeSomewhatSimple).toFixed(2),
-    '1.10',
-    'should estimate (somewhat simple)'
+  await t.test(
+    'should take age into account (2, somewhat complex)',
+    async function () {
+      assert.deepEqual(readingTime(tree, {age: 21}).toFixed(2), '0.75')
+    }
   )
 
-  assert.deepEqual(
-    readingTime({type: 'root', children: []}).toFixed(2),
-    '0.00',
-    'should estimate (empty)'
+  await t.test(
+    'should take age into account (2, somewhat simple)',
+    async function () {
+      assert.deepEqual(
+        readingTime(treeSomewhatSimple, {age: 21}).toFixed(2),
+        '0.71'
+      )
+    }
   )
 
-  assert.deepEqual(
-    readingTime(tree, {age: 12}).toFixed(2),
-    '2.44',
-    'should take age into account (1, somewhat complex)'
-  )
-  assert.deepEqual(
-    readingTime(treeSomewhatSimple, {age: 12}).toFixed(2),
-    '1.98',
-    'should take age into account (1, somewhat simple)'
-  )
+  await t.test('should cap at a reasonable time (1)', async function () {
+    assert.deepEqual(readingTime(tree, {age: 1}).toFixed(2), '4.46')
+  })
 
-  assert.deepEqual(
-    readingTime(tree, {age: 21}).toFixed(2),
-    '0.75',
-    'should take age into account (2, somewhat complex)'
-  )
-  assert.deepEqual(
-    readingTime(treeSomewhatSimple, {age: 21}).toFixed(2),
-    '0.71',
-    'should take age into account (2, somewhat simple)'
-  )
-
-  assert.deepEqual(
-    readingTime(tree, {age: 1}).toFixed(2),
-    '4.46',
-    'should cap at a reasonable time (1)'
-  )
-
-  assert.deepEqual(
-    readingTime(tree, {age: 81}).toFixed(2),
-    '0.70',
-    'should cap at a reasonable time (2)'
-  )
+  await t.test('should cap at a reasonable time (2)', async function () {
+    assert.deepEqual(readingTime(tree, {age: 81}).toFixed(2), '0.70')
+  })
 })
