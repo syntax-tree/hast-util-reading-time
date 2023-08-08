@@ -45,7 +45,7 @@ wraps this utility to figure, for use with [`rehype-meta`][rehype-meta].
 ## Install
 
 This package is [ESM only][esm].
-In Node.js (version 14.14+ and or 16.0+), install with [npm][]:
+In Node.js (version 16.0+), install with [npm][]:
 
 ```sh
 npm install hast-util-reading-time
@@ -61,7 +61,7 @@ In browsers with [`esm.sh`][esmsh]:
 
 ```html
 <script type="module">
-  import {readingTime} from "https://esm.sh/hast-util-reading-time@1?bundle"
+  import {readingTime} from 'https://esm.sh/hast-util-reading-time@1?bundle'
 </script>
 ```
 
@@ -99,7 +99,7 @@ It takes about 2-3m to read
 
 ## API
 
-This package exports the identifier [`readingTime`][readingtime].
+This package exports the identifier [`readingTime`][api-reading-time].
 There is no default export.
 
 ### `readingTime(tree[, options])`
@@ -130,7 +130,7 @@ The algorithm works as follows:
 
 *   `tree` ([`Node`][node])
     — tree to inspect
-*   `options` ([`Options`][options])
+*   `options` ([`Options`][api-options], optional)
     — configuration
 
 ###### Returns
@@ -157,14 +157,17 @@ expect your readers to all be college graduates, etc.
 ## Types
 
 This package is fully typed with [TypeScript][].
-It exports the additional type [`Options`][options].
+It exports the additional type [`Options`][api-options].
 
 ## Compatibility
 
-Projects maintained by the unified collective are compatible with all maintained
+Projects maintained by the unified collective are compatible with maintained
 versions of Node.js.
-As of now, that is Node.js 14.14+ and 16.0+.
-Our projects sometimes work with older versions, but this is not guaranteed.
+
+When we cut a new major release, we drop support for unmaintained versions of
+Node.
+This means we try to keep the current release line,
+`hast-util-reading-time@^1`, compatible with Node.js 12.
 
 ## Security
 
@@ -205,9 +208,9 @@ abide by its terms.
 
 [downloads]: https://www.npmjs.com/package/hast-util-reading-time
 
-[size-badge]: https://img.shields.io/bundlephobia/minzip/hast-util-reading-time.svg
+[size-badge]: https://img.shields.io/badge/dynamic/json?label=minzipped%20size&query=$.size.compressedSize&url=https://deno.bundlejs.com/?q=hast-util-reading-time
 
-[size]: https://bundlephobia.com/result?p=hast-util-reading-time
+[size]: https://bundlejs.com/?q=hast-util-reading-time
 
 [sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
 
@@ -265,6 +268,6 @@ abide by its terms.
 
 [martech]: https://martech.org/estimated-reading-times-increase-engagement/
 
-[readingtime]: #readingtimetree-options
+[api-reading-time]: #readingtimetree-options
 
-[options]: #options
+[api-options]: #options
